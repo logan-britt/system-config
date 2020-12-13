@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import platform
+import subprocess
 
 '''
   These functions pretain to text and text based programs (tui's). These
@@ -13,11 +14,11 @@ import platform
 def neovim(clean_up=False):
   if platform.system() == 'Linux':
     if 'arch' in platform.platform():
-      os.system('pacman -S neovim')
+      subprocess.run(['pacman', '-S', 'neovim'])
       print()
 
     elif 'ubuntu' in platform.platform():
-      os.system('apt install neovim')
+      subprocess.run(['apt', 'install', 'neovim'])
       print()
 
     else:
@@ -32,24 +33,49 @@ def neovim(clean_up=False):
   else:
     raise RuntimeError('This system does not support neovim.')
 
-  os.system('git clone https://github.com/logan-britt/neovim-config.git')
+  subprocess.run(
+        ['git', 'clone', 'https://github.com/logan-britt/neovim-config.git'])
   print()
 
   os.chdir('neovim-config')
-  os.system('python install.py')
+  subprocess.run(['python', 'install.py'])
   os.chdir('..')
 
   if clean_up:
     shutil.rmtree('neovim-config')
 
-def tmux(clean_up=False):
+def remove_neovim():
   if platform.system() == 'Linux':
     if 'arch' in platform.platform():
-      os.system('pacman -S tmux')
+      subprocess.run(['pacman', '-Rnc', 'neovim'])
       print()
 
     elif 'ubuntu' in platform.platform():
-      os.system('apt install tmux')
+      subprocess.run(['apt', 'remove ', 'neovim'])
+      print()
+    
+    else:
+      raise RuntimeError('This distro is not supported.')
+    
+    pass
+
+  elif platform.system() == 'Darwin':
+    pass
+
+  elif platform.system() == 'Windows':
+    pass
+
+  else:
+    raise RuntimeError('This system is not supported.')
+
+def tmux(clean_up=False):
+  if platform.system() == 'Linux':
+    if 'arch' in platform.platform():
+      subprocess.run(['pacman', '-S', 'tmux'])
+      print()
+
+    elif 'ubuntu' in platform.platform():
+      subprocess.run(['apt', 'install', 'tmux'])
       print()
 
     else:
@@ -61,11 +87,12 @@ def tmux(clean_up=False):
   else:
     raise RuntimeError('This system does not support tmux.')
 
-  os.system('git clone https://github.com/logan-britt/tmux-config.git')
+  subprocess.run(
+        ['git', 'clone', 'https://github.com/logan-britt/tmux-config.git'])
   print()
 
   os.chdir('tmux-config')
-  os.system('python install.py')
+  subprocess.run(['python', 'install.py'])
   os.chdir('..')
 
   if clean_up:
@@ -91,11 +118,11 @@ def powerline(clean_up=False):
 def zsh(clean_up=False):
   if platform.system() == 'Linux':
     if 'arch' in platform.platform():
-      os.system('pacman -S zsh')
+      subprocess.run(['pacman', '-S', 'zsh'])
       print()
 
     elif 'ubuntu' in platform.platform():
-      os.system('apt install zsh')
+      subprocess.run(['apt', 'install', 'zsh'])
       print()
 
     else:
@@ -107,11 +134,12 @@ def zsh(clean_up=False):
   else:
     raise RuntimeError('This system does not support zsh.')
 
-  os.system('git clone https://github.com/logan-britt/zsh-config.git')
+  subprocess.run(
+          ['git', 'clone', 'https://github.com/logan-britt/zsh-config.git'])
   print()
 
   os.chdir('zsh-config')
-  os.system('python install.py')
+  subprocess.run(['python', 'install.py'])
   os.chdir('..')
 
   if clean_up:
@@ -120,11 +148,11 @@ def zsh(clean_up=False):
 def w3m(clean_up=False):
   if platform.system() == 'Linux':
     if 'arch' in platform.platform():
-      os.system('pacman -S w3m')
+      subprocess.run(['pacman', '-S', 'w3m'])
       print()
 
     elif 'ubuntu' in platform.platform():
-      os.system('apt install w3m')
+      subprocess.run(['apt', 'install', 'w3m'])
       print()
 
     else:
@@ -136,11 +164,12 @@ def w3m(clean_up=False):
   else:
     raise RuntimeError('This system does not support w3m.')
 
-  os.system('git clone https://github.com/logan-britt/w3m-config.git')
+  subprocess.run(
+          ['git', 'clone', 'https://github.com/logan-britt/w3m-config.git'])
   print()
 
   os.chdir('w3m-config')
-  os.system('python install.py')
+  subprocess.run(['python', 'install.py'])
   os.chdir('..')
 
   if clean_up:
@@ -154,7 +183,32 @@ def w3m(clean_up=False):
 '''
 
 def i3(clean_up=False):
-  pass
+    if platform.system() != 'Linux':
+        raise RuntimeError('This system is not supported.')
+
+    if 'arch' in platform.platform():
+        subprocess.run(['pacman', '-S', 'i3-gaps', 'picom', 'feh'])
+        print()
+
+        print('Setting up the aur packages.')
+        subprocess.run(
+                ['git', 'clone', 'https://aur.archlinux.org/polybar.git'])
+        os.chdir('polybar')
+        subprocess.run(['makepkg', '-si'])
+        os.chdir('..')
+        shutil.rmtree('polybar')
+        print()
+
+    else:
+        raise RuntimeError('This distro is not supported.')
+
+    subprocess.run(
+            ['git', 'clone', 'https://github.com/logan-britt/i3-config.git'])
+    print()
+
+    os.chdir('i3-config')
+    subprocess.run(['python', 'install.py'])
+    os.chdir('..')
 
 def dwm(clean_up=False):
   pass
@@ -165,21 +219,35 @@ def dwm(clean_up=False):
   every other set of config functions with a 
 '''
 
-def tor(clean_up=False):
-  pass
+def tor_setup(clean_up=False):
+    print('Not configured yet...')
 
-def proton_vpn(clean_up=False):
-  pass
+def vpn_setup(clean_up=False):
+    if platform.system() == 'Linux':
+        if 'arch' in platform.platform():
+            subprocess.run(
+                ['pacman', '-S', 'openvpn', 'networkmanager-openvpn'])
+
+        elif 'ubuntu' in platform.platform():
+            pass
+
+        else:
+            raise RuntimeError('This distro is not supported.')
+
+    elif platform.system() == 'Darwin':
+        pass
+
+    elif platform.system() == 'Windows':
+        pass
+
+    else:
+        raise RuntimeError('This operating system is not supported.')
 
 '''
-
+  This block of code runs the main function for this script. The first chunk
+  of the code processes the user inputs and the second chunk of the code
+  takes the user input and processes it into the 
 '''
-
-def setup(clean_up=False):
-  pass
-
-def config(clean_up=False):
-  pass
 
 if __name__ == '__main__':
   arguments = sys.argv
@@ -203,3 +271,4 @@ if __name__ == '__main__':
     raise ValueError('The first argument must be either --run or --config.')
 
   # now that we have the processed arguments, we run the approprieate function
+  pass
